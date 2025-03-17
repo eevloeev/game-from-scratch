@@ -14,6 +14,10 @@ class RenderService implements Service, Renderable {
     this.renderables.push(renderable);
   }
 
+  public getRenderables() {
+    return [...this.renderables];
+  }
+
   public render(ctx: CanvasRenderingContext2D) {
     const currentTime = performance.now();
     const deltaTime = (currentTime - this.lastTime) / 1000;
