@@ -101,8 +101,8 @@ class BaseEntity implements Entity {
     };
   }
 
-  public setIsCollidable(isColliding: boolean) {
-    this.isCollidable = isColliding;
+  public setIsCollidable(isCollidable: boolean) {
+    this.isCollidable = isCollidable;
   }
 
   public getPosition() {
@@ -121,7 +121,7 @@ class BaseEntity implements Entity {
     throw new Error("Method not implemented.");
   }
 
-  public constructor(x: number, y: number, width: number, height: number, isColliding: boolean) {
+  public constructor(x: number, y: number, width: number, height: number, isCollidable: boolean) {
     this.position = {
       x,
       y,
@@ -132,7 +132,7 @@ class BaseEntity implements Entity {
       height,
     };
 
-    this.isCollidable = isColliding;
+    this.isCollidable = isCollidable;
   }
 }
 
