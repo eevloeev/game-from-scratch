@@ -1,9 +1,9 @@
 import PerfomanceBar from "@/entities/PerfomanceBar";
-import HomeScene from "@/scenes/homeScene";
+import HomeScene from "@/scenes/HomeScene";
 import configService from "@/services/configService";
 import renderService from "@/services/renderService";
 
-import "@/reset.css";
+import "@/style.css";
 
 const config = configService.getConfig();
 

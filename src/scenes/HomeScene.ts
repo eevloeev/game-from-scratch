@@ -1,5 +1,5 @@
-import Barrel from "@/entities/barrel";
-import Player from "@/entities/player";
+import Barrel from "@/entities/Barrel";
+import Player from "@/entities/Player";
 import BaseScene from "@/scenes/BaseScene";
 import ConfigService from "@/services/configService";
 import renderService from "@/services/renderService";
