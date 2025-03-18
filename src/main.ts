@@ -1,4 +1,4 @@
-import PerfomanceBar from "@/entities/PerfomanceBar";
+import PerfomanceBar from "@/renderables/PerfomanceBar";
 import HomeScene from "@/scenes/HomeScene";
 import assetService from "@/services/assetService";
 import configService from "@/services/configService";
