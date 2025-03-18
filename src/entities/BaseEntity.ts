@@ -7,6 +7,11 @@ class BaseEntity implements Entity {
     y: number;
   };
 
+  private previousPosition: {
+    x: number;
+    y: number;
+  };
+
   private size: {
     width: number;
     height: number;
@@ -109,6 +114,10 @@ class BaseEntity implements Entity {
     return this.position;
   }
 
+  public getPreviousPosition() {
+    return this.previousPosition;
+  }
+
   public getSize() {
     return this.size;
   }
@@ -118,11 +127,17 @@ class BaseEntity implements Entity {
   }
 
   public render(_ctx: CanvasRenderingContext2D, _deltaTime: number) {
-    throw new Error("Method not implemented.");
+    this.previousPosition.x = this.position.x;
+    this.previousPosition.y = this.position.y;
   }
 
   public constructor(x: number, y: number, width: number, height: number, isCollidable: boolean) {
     this.position = {
+      x,
+      y,
+    };
+
+    this.previousPosition = {
       x,
       y,
     };

@@ -12,6 +12,10 @@ class Barrel extends BaseEntity {
   public render(ctx: CanvasRenderingContext2D) {
     this.drawBarrel(ctx);
   }
+
+  public constructor(x: number, y: number, isCollidable: boolean) {
+    super(x, y, 64, 64, isCollidable);
+  }
 };
 
 export default Barrel;

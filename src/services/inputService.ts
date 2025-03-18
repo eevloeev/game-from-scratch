@@ -17,8 +17,18 @@ class InputService implements Service {
     return this.input;
   }
 
+  private hideCursor() {
+    document.body.style.cursor = "none";
+  }
+
+  private showCursor() {
+    document.body.style.cursor = "default";
+  }
+
   public constructor() {
     document.addEventListener("keydown", (e) => {
+      this.hideCursor();
+
       if (e.key === "ArrowUp" || e.key.toLowerCase() === "w") {
         this.input.up = true;
       } else if (e.key === "ArrowDown" || e.key.toLowerCase() === "s") {
@@ -27,6 +37,8 @@ class InputService implements Service {
         this.input.left = true;
       } else if (e.key === "ArrowRight" || e.key.toLowerCase() === "d") {
         this.input.right = true;
+      } else {
+        this.showCursor();
       }
     });
     
@@ -41,6 +53,10 @@ class InputService implements Service {
         this.input.right = false;
       }
     });
+
+    document.addEventListener("mousemove", () => {
+      this.showCursor();
+    }, { passive: true });
   }
 };
 

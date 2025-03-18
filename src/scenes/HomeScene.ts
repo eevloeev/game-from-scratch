@@ -14,8 +14,8 @@ class HomeScene extends BaseScene {
   }
 
   protected onMounted() {
-    renderService.addRenderable(new Player(100, 100, 50, 50, true));
-    renderService.addRenderable(new Barrel(400, 100, 50, 50, true));
+    renderService.addRenderable(new Player(100, 100, true));
+    renderService.addRenderable(new Barrel(400, 100, true));
   }
 }
 
