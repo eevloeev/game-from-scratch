@@ -26,51 +26,26 @@ class Player extends BaseEntity {
 
   private updatePosition(deltaTime: number) {
     const input = inputService.getInput();
+    const speed = input.isDiagonal ? this.diagonalSpeed : this.walkSpeed;
 
-    if (input.isDiagonal) {
-      if (input.up && input.right) {
-        const { x, y } = this.getPosition();
-        this.setPositionX(x + this.diagonalSpeed * deltaTime);
-        this.setPositionY(y - this.diagonalSpeed * deltaTime);
-      }
-
-      if (input.up && input.left) {
-        const { x, y } = this.getPosition();
-        this.setPositionX(x - this.diagonalSpeed * deltaTime);
-        this.setPositionY(y - this.diagonalSpeed * deltaTime);
-      }
-
-      if (input.down && input.right) {
-        const { x, y } = this.getPosition();
-        this.setPositionX(x + this.diagonalSpeed * deltaTime);
-        this.setPositionY(y + this.diagonalSpeed * deltaTime);
-      }
-
-      if (input.down && input.left) {
-        const { x, y } = this.getPosition();
-        this.setPositionX(x - this.diagonalSpeed * deltaTime);
-        this.setPositionY(y + this.diagonalSpeed * deltaTime);
-      }
-    } else {
-      if (input.up) {
-        const { y } = this.getPosition();
-        this.setPositionY(y - this.walkSpeed * deltaTime);
-      }
-      
-      if (input.right) {
-        const { x } = this.getPosition();
-        this.setPositionX(x + this.walkSpeed * deltaTime);
-      }
-      
-      if (input.down) {
-        const { y } = this.getPosition();
-        this.setPositionY(y + this.walkSpeed * deltaTime);
-      }
-      
-      if (input.left) {
-        const { x } = this.getPosition();
-        this.setPositionX(x - this.walkSpeed * deltaTime);
-      }
+    if (input.up) {
+      const { y } = this.getPosition();
+      this.setPositionY(y - speed * deltaTime);
+    }
+    
+    if (input.right) {
+      const { x } = this.getPosition();
+      this.setPositionX(x + speed * deltaTime);
+    }
+    
+    if (input.down) {
+      const { y } = this.getPosition();
+      this.setPositionY(y + speed * deltaTime);
+    }
+    
+    if (input.left) {
+      const { x } = this.getPosition();
+      this.setPositionX(x - speed * deltaTime);
     }
   }
 

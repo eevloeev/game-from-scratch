@@ -29,7 +29,14 @@ class InputService implements Service {
 
   private updateIsDiagonal() {
     this.input.isDiagonal = (this.input.up || this.input.down) && (this.input.left || this.input.right);
+
+    if (this.input.up && this.input.down) {
+      this.input.isDiagonal = false;
+    } else if (this.input.left && this.input.right) {
+      this.input.isDiagonal = false;
+    }
   }
+
   public constructor() {
     document.addEventListener("keydown", (e) => {
       this.hideCursor();
