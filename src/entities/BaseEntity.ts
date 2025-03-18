@@ -1,5 +1,6 @@
+import assetService from "@/services/assetService";
 import renderService from "@/services/renderService";
-import { Entity } from "@/types";
+import { Animation, AnimationSequenceMap, Entity } from "@/types";
 
 class BaseEntity implements Entity {
   private position: {
@@ -17,7 +18,17 @@ class BaseEntity implements Entity {
     height: number;
   };
 
-  private isCollidable: boolean;
+  private animation: Animation = {
+    sequenceMap: {},
+    frameWidth: 0,
+    frameHeight: 0,
+    frameScale: 1,
+    name: null,
+    currentFrame: 0,
+    lastFrameTime: 0,
+  };
+
+  private isCollidable: boolean = false;
 
   public setPositionX(x: number) {
     if (this.isCollidable) {
@@ -110,6 +121,36 @@ class BaseEntity implements Entity {
     this.isCollidable = isCollidable;
   }
 
+  public setAnimationSequenceMap(sequenceMap: AnimationSequenceMap) {
+    this.animation.sequenceMap = sequenceMap;
+  }
+
+  public setAnimationName(name: string) {
+    this.animation.name = name;
+    // this.animation.currentFrame = 0;
+    // this.animation.lastFrameTime = 0;
+  }
+
+  public setAnimationCurrentFrame(currentFrame: number) {
+    this.animation.currentFrame = currentFrame;
+  }
+
+  public setAnimationLastFrameTime(lastFrameTime: number) {
+    this.animation.lastFrameTime = lastFrameTime;
+  }
+
+  public setAnimationFrameWidth(frameWidth: number) {
+    this.animation.frameWidth = frameWidth;
+  }
+
+  public setAnimationFrameHeight(frameHeight: number) {
+    this.animation.frameHeight = frameHeight;
+  }
+
+  public setAnimationFrameScale(frameScale: number) {
+    this.animation.frameScale = frameScale;
+  }
+
   public getPosition() {
     return this.position;
   }
@@ -126,12 +167,56 @@ class BaseEntity implements Entity {
     return this.isCollidable;
   }
 
-  public render(_ctx: CanvasRenderingContext2D, _deltaTime: number) {
-    this.previousPosition.x = this.position.x;
-    this.previousPosition.y = this.position.y;
+  public getAnimation() {
+    return this.animation as Readonly<Animation>;
   }
 
-  public constructor(x: number, y: number, width: number, height: number, isCollidable: boolean) {
+  protected animate(ctx: CanvasRenderingContext2D, _deltaTime: number) {
+    if (!this.animation.name) {
+      return;
+    }
+
+    const { x, y } = this.getPosition();
+    const { width, height } = this.getSize();
+    const { frameWidth, frameHeight } = this.getAnimation();
+
+    const now = Date.now();
+    const sequence = this.animation.sequenceMap[this.animation.name];
+
+    if (this.animation.currentFrame >= sequence.count) {
+      this.animation.currentFrame = 0;
+    }
+
+    if (now - this.animation.lastFrameTime >= sequence.frameTime) {
+      this.animation.currentFrame = (this.animation.currentFrame + 1) % sequence.count;
+      this.animation.lastFrameTime = now;
+    }
+
+    ctx.drawImage(
+      assetService.getAsset(sequence.asset),
+      frameWidth * this.animation.currentFrame,
+      sequence.row * frameHeight,
+      frameWidth, frameHeight,
+      x - (frameWidth - width) / 2 - frameWidth,
+      y - (frameHeight - height) / 2 - frameHeight,
+      frameWidth * this.animation.frameScale, frameHeight * this.animation.frameScale,
+    );
+  }
+
+  protected onCreate() {}
+
+  protected onRender(_ctx: CanvasRenderingContext2D, _deltaTime: number) {}
+
+  public render(ctx: CanvasRenderingContext2D, deltaTime: number) {
+    this.previousPosition.x = this.position.x;
+    this.previousPosition.y = this.position.y;
+
+    this.onRender(ctx, deltaTime);
+
+    this.animate(ctx, deltaTime);
+  }
+
+  public constructor(x: number, y: number, width: number, height: number) {
     this.position = {
       x,
       y,
@@ -147,7 +232,7 @@ class BaseEntity implements Entity {
       height,
     };
 
-    this.isCollidable = isCollidable;
+    this.onCreate();
   }
 }
 

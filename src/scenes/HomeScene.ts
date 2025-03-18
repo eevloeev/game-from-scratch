@@ -1,5 +1,5 @@
 import Barrel from "@/entities/Barrel";
-import Player from "@/entities/Player";
+import Player from "@/entities/Player/Player";
 import BaseScene from "@/scenes/BaseScene";
 import ConfigService from "@/services/configService";
 import renderService from "@/services/renderService";
@@ -14,8 +14,8 @@ class HomeScene extends BaseScene {
   }
 
   protected onMounted() {
-    renderService.addRenderable(new Player(100, 100, true));
-    renderService.addRenderable(new Barrel(400, 100, true));
+    renderService.addRenderable(new Player(100, 100));
+    renderService.addRenderable(new Barrel(400, 100));
   }
 }
 
