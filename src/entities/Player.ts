@@ -9,6 +9,7 @@ type State = "idle" | "walk";
 const PLAYER_COLLIDER_WIDTH = 40;
 const PLAYER_COLLIDER_HEIGHT = 64;
 const PLAYER_SPEED = 300;
+const PLAYER_DIAGONAL_SPEED = PLAYER_SPEED * Math.sqrt(2) / 2;
 const FRAME_WIDTH = 64;
 const FRAME_HEIGHT = 64;
 const FRAME_SCALE = 3;
@@ -94,24 +95,50 @@ class Player extends BaseEntity {
     const input = inputService.getInput();
     const { x: previousX, y: previousY } = this.getPreviousPosition();
 
-    if (input.up) {
-      const { y } = this.getPosition();
-      this.setPositionY(y - PLAYER_SPEED * deltaTime);
-    }
-    
-    if (input.right) {
-      const { x } = this.getPosition();
-      this.setPositionX(x + PLAYER_SPEED * deltaTime);
-    }
-    
-    if (input.down) {
-      const { y } = this.getPosition();
-      this.setPositionY(y + PLAYER_SPEED * deltaTime);
-    }
-    
-    if (input.left) {
-      const { x } = this.getPosition();
-      this.setPositionX(x - PLAYER_SPEED * deltaTime);
+    if (input.isDiagonal) {
+      if (input.up && input.right) {
+        const { x, y } = this.getPosition();
+        this.setPositionX(x + PLAYER_DIAGONAL_SPEED * deltaTime);
+        this.setPositionY(y - PLAYER_DIAGONAL_SPEED * deltaTime);
+      }
+
+      if (input.up && input.left) {
+        const { x, y } = this.getPosition();
+        this.setPositionX(x - PLAYER_DIAGONAL_SPEED * deltaTime);
+        this.setPositionY(y - PLAYER_DIAGONAL_SPEED * deltaTime);
+      }
+
+      if (input.down && input.right) {
+        const { x, y } = this.getPosition();
+        this.setPositionX(x + PLAYER_DIAGONAL_SPEED * deltaTime);
+        this.setPositionY(y + PLAYER_DIAGONAL_SPEED * deltaTime);
+      }
+
+      if (input.down && input.left) {
+        const { x, y } = this.getPosition();
+        this.setPositionX(x - PLAYER_DIAGONAL_SPEED * deltaTime);
+        this.setPositionY(y + PLAYER_DIAGONAL_SPEED * deltaTime);
+      }
+    } else {
+      if (input.up) {
+        const { y } = this.getPosition();
+        this.setPositionY(y - PLAYER_SPEED * deltaTime);
+      }
+      
+      if (input.right) {
+        const { x } = this.getPosition();
+        this.setPositionX(x + PLAYER_SPEED * deltaTime);
+      }
+      
+      if (input.down) {
+        const { y } = this.getPosition();
+        this.setPositionY(y + PLAYER_SPEED * deltaTime);
+      }
+      
+      if (input.left) {
+        const { x } = this.getPosition();
+        this.setPositionX(x - PLAYER_SPEED * deltaTime);
+      }
     }
 
     const { x: nextX, y: nextY } = this.getPosition();
