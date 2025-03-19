@@ -21,22 +21,26 @@ if (!ctx) {
   throw new Error("Failed to get 2d context");
 }
 
-await assetService.loadAssets({
-  playerUnarmedIdle: playerUnarmedIdleSprite,
-  playerUnarmedWalk: playerUnarmedWalkSprite,
-});
-
-renderService.addRenderables(
-  new HomeScene(),
-  new PerfomanceBar(),
-  new DebugBar(),
-);
-
-const render = () => {
-  renderService.render(ctx);
-  requestAnimationFrame(render);
+const bootstrap = async () => {
+  await assetService.loadAssets({
+    playerUnarmedIdle: playerUnarmedIdleSprite,
+    playerUnarmedWalk: playerUnarmedWalkSprite,
+  });
+  
+  renderService.addRenderables(
+    new HomeScene(),
+    new PerfomanceBar(),
+    new DebugBar(),
+  );
+  
+  const render = () => {
+    renderService.render(ctx);
+    requestAnimationFrame(render);
+  };
+  
+  document.body.appendChild(canvas);
+  
+  render();
 };
 
-document.body.appendChild(canvas);
-
-render();
+bootstrap();
