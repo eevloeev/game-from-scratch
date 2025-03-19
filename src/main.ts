@@ -7,6 +7,7 @@ import playerUnarmedIdleSprite from "@/assets/player/Unarmed_Idle/Unarmed_Idle_f
 import playerUnarmedWalkSprite from "@/assets/player/Unarmed_Walk/Unarmed_Walk_full.png";
 
 import "@/style.css";
+import DebugBar from "@/renderables/DebugBar";
 
 const config = configService.getConfig();
 
@@ -25,8 +26,11 @@ await assetService.loadAssets({
   playerUnarmedWalk: playerUnarmedWalkSprite,
 });
 
-renderService.addRenderable(new HomeScene());
-renderService.addRenderable(new PerfomanceBar());
+renderService.addRenderables(
+  new HomeScene(),
+  new PerfomanceBar(),
+  new DebugBar(),
+);
 
 const render = () => {
   renderService.render(ctx);

@@ -7,24 +7,22 @@ class InputService implements Service {
     left: boolean;
     right: boolean;
     isDiagonal: boolean;
+    mouseX: number;
+    mouseY: number;
+    isMouseDown: boolean;
   } = {
     up: false,
     down: false,
     left: false,
     right: false,
     isDiagonal: false,
+    mouseX: 0,
+    mouseY: 0,
+    isMouseDown: false,
   };
 
   public getInput() {
     return this.input;
-  }
-
-  private hideCursor() {
-    document.body.style.cursor = "none";
-  }
-
-  private showCursor() {
-    document.body.style.cursor = "default";
   }
 
   private updateIsDiagonal() {
@@ -39,8 +37,6 @@ class InputService implements Service {
 
   public constructor() {
     document.addEventListener("keydown", (e) => {
-      this.hideCursor();
-
       if (e.code === "ArrowUp" || e.code === "KeyW") {
         this.input.up = true;
       } else if (e.code === "ArrowDown" || e.code === "KeyS") {
@@ -49,8 +45,6 @@ class InputService implements Service {
         this.input.left = true;
       } else if (e.code === "ArrowRight" || e.code === "KeyD") {
         this.input.right = true;
-      } else {
-        this.showCursor();
       }
 
       this.updateIsDiagonal();
@@ -70,9 +64,18 @@ class InputService implements Service {
       this.updateIsDiagonal();
     });
 
-    document.addEventListener("mousemove", () => {
-      this.showCursor();
+    document.addEventListener("mousemove", (e) => {
+      this.input.mouseX = e.clientX;
+      this.input.mouseY = e.clientY;
     }, { passive: true });
+
+    document.addEventListener("mousedown", () => {
+      this.input.isMouseDown = true;
+    });
+
+    document.addEventListener("mouseup", () => {
+      this.input.isMouseDown = false;
+    });
   }
 };
 

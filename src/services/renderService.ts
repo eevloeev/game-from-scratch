@@ -10,12 +10,16 @@ class RenderService implements Service, Renderable {
   private renderables: Renderable[] = [];
   private lastTime: number = performance.now();
 
-  public addRenderable(renderable: Renderable) {
-    this.renderables.push(renderable);
+  public addRenderables(...renderables: Renderable[]) {
+    this.renderables.push(...renderables);
   }
 
   public getRenderables() {
     return [...this.renderables];
+  }
+
+  public removeRenderable(renderable: Renderable) {
+    this.renderables = this.renderables.filter((r) => r !== renderable);
   }
 
   public render(ctx: CanvasRenderingContext2D) {

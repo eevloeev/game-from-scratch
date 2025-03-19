@@ -1,8 +1,8 @@
 import assetService from "@/services/assetService";
 import renderService from "@/services/renderService";
-import { Animation, AnimationSequenceMap, Entity } from "@/types";
+import { Animation, AnimationSequenceMap } from "@/types";
 
-class BaseEntity implements Entity {
+class BaseEntity {
   private position: {
     x: number;
     y: number;
@@ -28,22 +28,14 @@ class BaseEntity implements Entity {
     lastFrameTime: 0,
   };
 
+  private health = 1;
+  private damagable = false;
+
   private isCollidable: boolean = false;
 
   public setPositionX(x: number) {
     if (this.isCollidable) {
-      const collidableEntities = renderService.getRenderables().filter((renderable) => (
-        renderable !== this &&
-        renderable instanceof BaseEntity &&
-        renderable.getIsCollidable()
-      )) as BaseEntity[];
-      
-      const collidingEntities = collidableEntities.filter((entity) => (
-        x < entity.position.x + entity.size.width &&
-        x + this.size.width > entity.position.x &&
-        this.position.y < entity.position.y + entity.size.height &&
-        this.position.y + this.size.height > entity.position.y
-      ));
+      const collidingEntities = this.getCollidingRenderables(x, this.position.y);
 
       if (collidingEntities.length === 0) {
         this.position.x = x;
@@ -72,18 +64,7 @@ class BaseEntity implements Entity {
 
   public setPositionY(y: number) {
     if (this.isCollidable) {
-      const collidableEntities = renderService.getRenderables().filter((renderable) => (
-        renderable !== this &&
-        renderable instanceof BaseEntity &&
-        renderable.getIsCollidable()
-      )) as BaseEntity[];
-      
-      const collidingEntities = collidableEntities.filter((entity) => (
-        this.position.x < entity.position.x + entity.size.width &&
-        this.position.x + this.size.width > entity.position.x &&
-        y < entity.position.y + entity.size.height &&
-        y + this.size.height > entity.position.y
-      ));
+      const collidingEntities = this.getCollidingRenderables(this.position.x, y);
 
       if (collidingEntities.length === 0) {
         this.position.y = y;
@@ -151,6 +132,24 @@ class BaseEntity implements Entity {
     this.animation.frameScale = frameScale;
   }
 
+  public setHealth(health: number) {
+    this.health = health;
+
+    if (this.health <= 0) {
+      this.destroy();
+    }
+  }
+
+  public setDamagable(damagable: boolean) {
+    this.damagable = damagable;
+  }
+
+  public decreaseHealth(amount: number) {
+    if (this.damagable) {
+      this.setHealth(this.health - amount);
+    }
+  }
+
   public getPosition() {
     return this.position;
   }
@@ -169,6 +168,14 @@ class BaseEntity implements Entity {
 
   public getAnimation() {
     return this.animation as Readonly<Animation>;
+  }
+
+  public getHealth() {
+    return this.health;
+  }
+
+  public getDamagable() {
+    return this.damagable;
   }
 
   protected animate(ctx: CanvasRenderingContext2D, _deltaTime: number) {
@@ -202,10 +209,35 @@ class BaseEntity implements Entity {
       frameWidth * this.animation.frameScale, frameHeight * this.animation.frameScale,
     );
   }
+  
+  public destroy() {
+    renderService.removeRenderable(this);
+    this.onDestroy();
+  }
+
+  protected getCollidingRenderables(x?: number, y?: number) {
+    const _x = x ?? this.position.x;
+    const _y = y ?? this.position.y;
+
+    const collidableEntities = renderService.getRenderables().filter((renderable) => (
+      renderable !== this &&
+      renderable instanceof BaseEntity &&
+      renderable.getIsCollidable()
+    )) as BaseEntity[];
+    
+    return collidableEntities.filter((entity) => (
+      _x < entity.position.x + entity.size.width &&
+      _x + this.size.width > entity.position.x &&
+      _y < entity.position.y + entity.size.height &&
+      _y + this.size.height > entity.position.y
+    ));
+  }
 
   protected onCreate() {}
 
   protected onRender(_ctx: CanvasRenderingContext2D, _deltaTime: number) {}
+
+  protected onDestroy() {}
 
   public render(ctx: CanvasRenderingContext2D, deltaTime: number) {
     this.previousPosition.x = this.position.x;
