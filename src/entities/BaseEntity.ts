@@ -1,6 +1,6 @@
 import assetService from "@/services/assetService";
 import renderService from "@/services/renderService";
-import { Animation, AnimationSequenceMap } from "@/types";
+import { Animation, AnimationSequenceMap, Position, Size } from "@/types";
 
 class BaseEntity {
   private position: {
@@ -150,15 +150,15 @@ class BaseEntity {
     }
   }
 
-  public getPosition() {
+  public getPosition(): Readonly<Position> {
     return this.position;
   }
 
-  public getPreviousPosition() {
+  public getPreviousPosition(): Readonly<Position> {
     return this.previousPosition;
   }
 
-  public getSize() {
+  public getSize(): Readonly<Size> {
     return this.size;
   }
 
@@ -166,8 +166,8 @@ class BaseEntity {
     return this.isCollidable;
   }
 
-  public getAnimation() {
-    return this.animation as Readonly<Animation>;
+  public getAnimation(): Readonly<Animation> {
+    return this.animation;
   }
 
   public getHealth() {
