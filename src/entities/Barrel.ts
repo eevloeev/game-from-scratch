@@ -9,7 +9,7 @@ class Barrel extends BaseEntity {
     ctx.fillRect(x, y, width, height);
   }
 
-  public constructor(x: number, y: number) {
+  constructor(x: number, y: number) {
     super(x, y, 64, 64);
     this.setIsCollidable(true);
   }

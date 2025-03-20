@@ -39,7 +39,7 @@ class Enemy extends BaseEntity {
     this.drawEnemy(ctx);
   }
 
-  public constructor(x: number, y: number) {
+  constructor(x: number, y: number) {
     super(x, y, Enemy.width, Enemy.height);
   }
 

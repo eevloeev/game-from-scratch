@@ -248,7 +248,7 @@ class BaseEntity {
     this.animate(ctx, deltaTime);
   }
 
-  public constructor(x: number, y: number, width: number, height: number) {
+  constructor(x: number, y: number, width: number, height: number) {
     this.position = {
       x,
       y,

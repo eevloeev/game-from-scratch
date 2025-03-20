@@ -51,7 +51,7 @@ class Bullet extends BaseEntity {
     this.handleIfOffScreen();
   }
 
-  public constructor(x: number, y: number, angle: number, owner: BaseEntity) {
+  constructor(x: number, y: number, angle: number, owner: BaseEntity) {
     super(x - Bullet.width / 2, y - Bullet.height / 2, Bullet.width, Bullet.height);
     this.angle = angle;
     this.owner = owner;

@@ -163,7 +163,7 @@ class Player extends BaseEntity {
     this.drawWeapon(ctx);
   }
 
-  public constructor(x: number, y: number) {
+  constructor(x: number, y: number) {
     super(x, y, 40, 64);
     Player.players.push(this);
   }

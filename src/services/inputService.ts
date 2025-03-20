@@ -35,7 +35,7 @@ class InputService implements Service {
     }
   }
 
-  public constructor() {
+  constructor() {
     document.addEventListener("keydown", (e) => {
       if (e.code === "ArrowUp" || e.code === "KeyW") {
         this.input.up = true;
