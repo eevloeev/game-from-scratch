@@ -107,9 +107,12 @@ class BaseEntity {
   }
 
   public setAnimationName(name: string) {
+    if (this.animation.name !== name) {
+      this.animation.currentFrame = 0;
+      this.animation.lastFrameTime = 0;
+    }
+
     this.animation.name = name;
-    // this.animation.currentFrame = 0;
-    // this.animation.lastFrameTime = 0;
   }
 
   public setAnimationCurrentFrame(currentFrame: number) {
@@ -189,10 +192,6 @@ class BaseEntity {
 
     const now = Date.now();
     const sequence = this.animation.sequenceMap[this.animation.name];
-
-    if (this.animation.currentFrame >= sequence.count) {
-      this.animation.currentFrame = 0;
-    }
 
     if (now - this.animation.lastFrameTime >= sequence.frameTime) {
       this.animation.currentFrame = (this.animation.currentFrame + 1) % sequence.count;
