@@ -39,29 +39,30 @@ class Player extends BaseEntity {
   private attackCooldown = 500;
   private lastAttackTime = 0;
 
-  private updatePosition(deltaTime: number) {
+  private updatePosition() {
     const input = inputService.getInput();
     const speed = input.isDiagonal ? this.diagonalSpeed : this.walkSpeed;
 
+    let velocityX = 0;
+    let velocityY = 0;
+
     if (input.up) {
-      const { y } = this.getPosition();
-      this.setPositionY(y - speed * deltaTime);
+      velocityY = -speed;
     }
     
     if (input.right) {
-      const { x } = this.getPosition();
-      this.setPositionX(x + speed * deltaTime);
+      velocityX = speed;
     }
     
     if (input.down) {
-      const { y } = this.getPosition();
-      this.setPositionY(y + speed * deltaTime);
+      velocityY = speed;
     }
     
     if (input.left) {
-      const { x } = this.getPosition();
-      this.setPositionX(x - speed * deltaTime);
+      velocityX = -speed;
     }
+
+    this.setVelocity(velocityX, velocityY);
   }
 
   private updateWeaponPosition() {
@@ -153,9 +154,9 @@ class Player extends BaseEntity {
     }
   }
 
-  public onRender(ctx: CanvasRenderingContext2D, deltaTime: number) {
+  public onRender(ctx: CanvasRenderingContext2D) {
     ctx.imageSmoothingEnabled = false;
-    this.updatePosition(deltaTime);
+    this.updatePosition();
     this.updateWeaponPosition();
     this.handleShooting();
     // this.updateAnimation();

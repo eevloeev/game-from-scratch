@@ -9,11 +9,8 @@ class Bullet extends BaseEntity {
   private owner: BaseEntity;
   private damage = 1;
 
-  private updatePosition(deltaTime: number) {
-    const { x, y } = this.getPosition();
-
-    this.setPositionX(x + this.speed * Math.cos(this.angle) * deltaTime);
-    this.setPositionY(y + this.speed * Math.sin(this.angle) * deltaTime);
+  private updatePosition() {
+    this.setVelocity(this.speed * Math.cos(this.angle), this.speed * Math.sin(this.angle));
   }
 
   private drawBullet(ctx: CanvasRenderingContext2D) {
@@ -44,8 +41,8 @@ class Bullet extends BaseEntity {
     }
   }
 
-  public onRender(ctx: CanvasRenderingContext2D, deltaTime: number) {
-    this.updatePosition(deltaTime);
+  public onRender(ctx: CanvasRenderingContext2D) {
+    this.updatePosition();
     this.drawBullet(ctx);
     this.handleCollisions();
     this.handleIfOffScreen();

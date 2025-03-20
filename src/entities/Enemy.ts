@@ -7,7 +7,7 @@ class Enemy extends BaseEntity {
 
   private speed = 100;
 
-  private updatePosition(deltaTime: number) {
+  private updatePosition() {
     const targetPosition = Player.players[0].getPosition();
     const { x, y } = this.getPosition();
 
@@ -22,8 +22,7 @@ class Enemy extends BaseEntity {
       y: direction.y / distance,
     };
 
-    this.setPositionX(x + normalizedDirection.x * this.speed * deltaTime);
-    this.setPositionY(y + normalizedDirection.y * this.speed * deltaTime);
+    this.setVelocity(normalizedDirection.x * this.speed, normalizedDirection.y * this.speed);
   }
 
   private drawEnemy(ctx: CanvasRenderingContext2D) {
@@ -34,8 +33,8 @@ class Enemy extends BaseEntity {
     ctx.fillRect(x, y, width, height);
   }
 
-  public onRender(ctx: CanvasRenderingContext2D, deltaTime: number) {
-    this.updatePosition(deltaTime);
+  public onRender(ctx: CanvasRenderingContext2D) {
+    this.updatePosition();
     this.drawEnemy(ctx);
   }
 

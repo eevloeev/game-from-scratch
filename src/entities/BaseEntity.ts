@@ -33,84 +33,19 @@ class BaseEntity {
 
   private isCollidable: boolean = false;
 
-  public setPositionX(x: number) {
-    if (this.isCollidable) {
-      const collidingEntities = this.getCollidingRenderables(x, this.position.y);
+  private velocity: {
+    x: number;
+    y: number;
+  } = {
+    x: 0,
+    y: 0,
+  };
 
-      if (collidingEntities.length === 0) {
-        this.position.x = x;
-      } else {
-        const direction = this.position.x - x < 0 ? 'right' : 'left';
-
-        if (direction === 'right') {
-          const leftMostCollidingEntity = collidingEntities.reduce((prev, current) => (
-            prev.position.x < current.position.x ? prev : current
-          ));
-
-          this.position.x = leftMostCollidingEntity.position.x - this.size.width;
-
-          const newCollidingEntities = this.getCollidingRenderables(x, this.position.y);
-
-          if (newCollidingEntities.length !== 0) {
-            this.position.x = this.previousPosition.x;
-          }
-        } else {
-          const rightMostCollidingEntity = collidingEntities.reduce((prev, current) => (
-            prev.position.x > current.position.x ? prev : current
-          ));
-
-          this.position.x = rightMostCollidingEntity.position.x + rightMostCollidingEntity.size.width;
-
-          const newCollidingEntities = this.getCollidingRenderables(x, this.position.y);
-
-          if (newCollidingEntities.length !== 0) {
-            this.position.x = this.previousPosition.x;
-          }
-        }
-      }
-    } else {
-      this.position.x = x;
-    }
-  }
-
-  public setPositionY(y: number) {
-    if (this.isCollidable) {
-      const collidingEntities = this.getCollidingRenderables(this.position.x, y);
-
-      if (collidingEntities.length === 0) {
-        this.position.y = y;
-      } else {
-        const direction = this.position.y - y < 0 ? 'down' : 'up';
-
-        if (direction === 'down') {
-          const upMostCollidingEntity = collidingEntities.reduce((prev, current) => (
-            prev.position.y < current.position.y ? prev : current
-          ));
-
-          this.position.y = upMostCollidingEntity.position.y - this.size.height;
-
-          const newCollidingEntities = this.getCollidingRenderables(this.position.x, y);
-
-          if (newCollidingEntities.length !== 0) {
-            this.position.y = this.previousPosition.y;
-          }
-        } else {
-          const downMostCollidingEntity = collidingEntities.reduce((prev, current) => (
-            prev.position.y > current.position.y ? prev : current
-          ));
-
-          this.position.y = downMostCollidingEntity.position.y + downMostCollidingEntity.size.height;
-
-          const newCollidingEntities = this.getCollidingRenderables(this.position.x, y);
-
-          if (newCollidingEntities.length !== 0) {
-            this.position.y = this.previousPosition.y;
-          }
-        }
-      }
-    } else {
-      this.position.y = y;
-    }
+  public setVelocity(x: number, y: number) {
+    this.velocity = {
+      x,
+      y,
+    };
   }
 
   public setSize(width: number, height: number) {
@@ -260,9 +195,57 @@ class BaseEntity {
 
   protected onDestroy() {}
 
-  public render(ctx: CanvasRenderingContext2D, deltaTime: number) {
+  private updatePreviousPosition() {
     this.previousPosition.x = this.position.x;
     this.previousPosition.y = this.position.y;
+  }
+
+  private _updatePosition(deltaTime: number) {
+    if (!this.isCollidable) {
+      this.position.x += this.velocity.x * deltaTime;
+      this.position.y += this.velocity.y * deltaTime;
+      return;
+    }
+
+    const newPosition = {
+      x: this.position.x + this.velocity.x * deltaTime,
+      y: this.position.y + this.velocity.y * deltaTime,
+    };
+
+    const collidingEntitiesX = this.getCollidingRenderables(newPosition.x, this.position.y);
+    const collidingEntitiesY = this.getCollidingRenderables(this.position.x, newPosition.y);
+
+    if (collidingEntitiesX.length === 0) {
+      this.position.x = newPosition.x;
+    } else {
+      if (this.velocity.x > 0) {
+        this.position.x = collidingEntitiesX[0].position.x - this.size.width;
+      } else {
+        this.position.x = collidingEntitiesX[0].position.x + collidingEntitiesX[0].size.width;
+      }
+    }
+
+    if (collidingEntitiesY.length === 0) {
+      this.position.y = newPosition.y;
+    } else {
+      if (this.velocity.y > 0) {
+        this.position.y = collidingEntitiesY[0].position.y - this.size.height;
+      } else {
+        this.position.y = collidingEntitiesY[0].position.y + collidingEntitiesY[0].size.height;
+      }
+    }
+
+    const collidingEntities = this.getCollidingRenderables(this.position.x, this.position.y);
+
+    if (collidingEntities.length > 0) {
+      this.position.x = this.previousPosition.x;
+      this.position.y = this.previousPosition.y;
+    }
+  }
+
+  public render(ctx: CanvasRenderingContext2D, deltaTime: number) {
+    this.updatePreviousPosition();
+    this._updatePosition(deltaTime);
 
     this.onRender(ctx, deltaTime);
 

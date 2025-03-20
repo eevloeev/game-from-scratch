@@ -52,7 +52,7 @@ class HomeScene extends BaseScene {
 
   protected onMounted() {
     renderService.addRenderables(
-      new Player(100, 100),
+      new Player(700, 350),
       new Barrel(400, 100),
     );
   }

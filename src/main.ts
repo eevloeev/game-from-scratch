@@ -9,11 +9,11 @@ import playerUnarmedWalkSprite from "@/assets/player/Unarmed_Walk/Unarmed_Walk_f
 import "@/style.css";
 import DebugBar from "@/renderables/DebugBar";
 
-const config = configService.getConfig();
+const { width, height } = configService.getConfig();
 
 const canvas = document.createElement("canvas");
-canvas.width = config.width;
-canvas.height = config.height;
+canvas.width = width;
+canvas.height = height;
 
 const ctx = canvas.getContext("2d");
 
