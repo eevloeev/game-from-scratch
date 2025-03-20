@@ -31,6 +31,7 @@ export type Animation = {
 
 export interface Renderable {
   render: (ctx: CanvasRenderingContext2D, deltaTime: number) => void;
+  destroy?: () => void;
 };
 
 export interface Service {};

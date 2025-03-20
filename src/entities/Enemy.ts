@@ -1,14 +1,22 @@
 import BaseEntity from "@/entities/BaseEntity";
 import Player from "@/entities/Player/Player";
+import gameService from "@/services/gameService";
 
-class Enemy extends BaseEntity {  
+class Enemy extends BaseEntity {
   public static width = 48;
   public static height = 48;
 
   private speed = 100;
+  private damage = 1;
 
   private updatePosition() {
-    const targetPosition = Player.players[0].getPosition();
+    const currentScene = gameService.getCurrentScene();
+
+    if (!currentScene) {
+      return;
+    }
+
+    const targetPosition = currentScene.getPlayers()[0].getPosition();
     const { x, y } = this.getPosition();
 
     const direction = {
@@ -23,6 +31,13 @@ class Enemy extends BaseEntity {
     };
 
     this.setVelocity(normalizedDirection.x * this.speed, normalizedDirection.y * this.speed);
+  }
+
+  protected onCollision(entity: BaseEntity) {
+    if (entity instanceof Player) {
+      entity.decreaseHealth(this.damage);
+      this.destroy();
+    }
   }
 
   private drawEnemy(ctx: CanvasRenderingContext2D) {

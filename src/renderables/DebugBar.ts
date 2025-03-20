@@ -2,11 +2,13 @@ import inputService from "@/services/inputService";
 import { Renderable } from "@/types";
 
 class DebugBar implements Renderable {
-  private drawInput(ctx: CanvasRenderingContext2D) {
+  public render(ctx: CanvasRenderingContext2D) {
     const { up, down, left, right, isMouseDown } = inputService.getInput();
 
     ctx.font = "bold 20px Arial";
     ctx.textAlign = "right";
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = "black";
     
     ctx.fillStyle = up ? "green" : "yellow";
     ctx.fillText("Up", ctx.canvas.width - 10, 30);
@@ -18,10 +20,6 @@ class DebugBar implements Renderable {
     ctx.fillText("Right", ctx.canvas.width - 10, 120);
     ctx.fillStyle = isMouseDown ? "green" : "yellow";
     ctx.fillText("LMB", ctx.canvas.width - 10, 150);
-  }
-
-  public render(ctx: CanvasRenderingContext2D) {
-    this.drawInput(ctx);
   }
 }
 

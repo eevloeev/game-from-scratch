@@ -1,25 +1,29 @@
 import { Service } from "@/types";
 
+type Input = {
+  up: boolean;
+  down: boolean;
+  left: boolean;
+  right: boolean;
+  isDiagonal: boolean;
+  mouseX: number;
+  mouseY: number;
+  isMouseDown: boolean;
+};
+
+const initialInput: Input = {
+  up: false,
+  down: false,
+  left: false,
+  right: false,
+  isDiagonal: false,
+  mouseX: 0,
+  mouseY: 0,
+  isMouseDown: false,
+};
+
 class InputService implements Service {
-  private input: {
-    up: boolean;
-    down: boolean;
-    left: boolean;
-    right: boolean;
-    isDiagonal: boolean;
-    mouseX: number;
-    mouseY: number;
-    isMouseDown: boolean;
-  } = {
-    up: false,
-    down: false,
-    left: false,
-    right: false,
-    isDiagonal: false,
-    mouseX: 0,
-    mouseY: 0,
-    isMouseDown: false,
-  };
+  private input: Input = structuredClone(initialInput);
 
   public getInput() {
     return this.input;
@@ -33,6 +37,10 @@ class InputService implements Service {
     } else if (this.input.left && this.input.right) {
       this.input.isDiagonal = false;
     }
+  }
+
+  public reset() {
+    this.input = structuredClone(initialInput);
   }
 
   constructor() {

@@ -1,16 +1,12 @@
-import PerfomanceBar from "@/renderables/PerfomanceBar";
+import "@/style.css";
+
 import HomeScene from "@/scenes/HomeScene";
 import assetService from "@/services/assetService";
-import configService from "@/services/configService";
-import renderService from "@/services/renderService";
+import gameService from "@/services/gameService";
 import playerUnarmedIdleSprite from "@/assets/player/Unarmed_Idle/Unarmed_Idle_full.png";
 import playerUnarmedWalkSprite from "@/assets/player/Unarmed_Walk/Unarmed_Walk_full.png";
 
-import "@/style.css";
-import DebugBar from "@/renderables/DebugBar";
-
-const { width, height } = configService.getConfig();
-
+const { width, height } = gameService.getConfig();
 const canvas = document.createElement("canvas");
 canvas.width = width;
 canvas.height = height;
@@ -21,26 +17,20 @@ if (!ctx) {
   throw new Error("Failed to get 2d context");
 }
 
-const bootstrap = async () => {
-  await assetService.loadAssets({
-    playerUnarmedIdle: playerUnarmedIdleSprite,
-    playerUnarmedWalk: playerUnarmedWalkSprite,
-  });
-  
-  renderService.addRenderables(
-    new HomeScene(),
-    new PerfomanceBar(),
-    new DebugBar(),
-  );
-  
-  const render = () => {
-    renderService.render(ctx);
-    requestAnimationFrame(render);
-  };
-  
-  document.body.appendChild(canvas);
-  
-  render();
+const render = () => {
+  try {
+    gameService.getCurrentScene()?.render(ctx);
+  } catch (error) {
+    console.error(error);
+  }
+  requestAnimationFrame(render);
 };
 
-bootstrap();
+assetService.loadAssets({
+  playerUnarmedIdle: playerUnarmedIdleSprite,
+  playerUnarmedWalk: playerUnarmedWalkSprite,
+}).then(() => {
+  document.body.appendChild(canvas);
+  gameService.start();
+  render();
+});

@@ -1,4 +1,6 @@
 import BaseEntity from "@/entities/BaseEntity";
+import Enemy from "@/entities/Enemy";
+import Player from "@/entities/Player/Player";
 
 class Bullet extends BaseEntity {
   public static width = 10;
@@ -30,21 +32,30 @@ class Bullet extends BaseEntity {
     }
   }
 
-  private handleCollisions() {
-    const target = this.getCollidingRenderables().find(
-      (renderable) => renderable !== this.owner
-    );
+  private handleHit() {
+    const target = this.getCollidingRenderables()[0];
 
-    if (target) {
-      target.decreaseHealth(this.damage);
-      this.destroy();
+    if (!target || target === this.owner) {
+      return;
     }
+
+    if (target instanceof Player) {
+      target.decreaseHealth(this.damage);
+    } else if (target instanceof Enemy) {
+      target.decreaseHealth(this.damage);
+
+      if (target.getIsDead() && this.owner instanceof Player) {
+        this.owner.addScore(1);
+      }
+    }
+
+    this.destroy();
   }
 
   public onRender(ctx: CanvasRenderingContext2D) {
     this.updatePosition();
+    this.handleHit();
     this.drawBullet(ctx);
-    this.handleCollisions();
     this.handleIfOffScreen();
   }
 

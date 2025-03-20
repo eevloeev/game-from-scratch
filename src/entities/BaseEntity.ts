@@ -1,5 +1,5 @@
 import assetService from "@/services/assetService";
-import renderService from "@/services/renderService";
+import gameService from "@/services/gameService";
 import { Animation, AnimationSequenceMap, Position, Size } from "@/types";
 
 class BaseEntity {
@@ -28,7 +28,8 @@ class BaseEntity {
     lastFrameTime: 0,
   };
 
-  private health = 1;
+  protected health = 1;
+  private isDead = false;
   private damagable = false;
 
   private isCollidable: boolean = false;
@@ -96,6 +97,7 @@ class BaseEntity {
     this.health = health;
 
     if (this.health <= 0) {
+      this.isDead = true;
       this.destroy();
     }
   }
@@ -128,6 +130,10 @@ class BaseEntity {
 
   public getAnimation(): Readonly<Animation> {
     return this.animation;
+  }
+
+  public getIsDead() {
+    return this.isDead;
   }
 
   public getHealth() {
@@ -167,7 +173,7 @@ class BaseEntity {
   }
   
   public destroy() {
-    renderService.removeRenderable(this);
+    gameService.getCurrentScene()?.removeRenderable(this);
     this.onDestroy();
   }
 
@@ -175,7 +181,7 @@ class BaseEntity {
     const _x = x ?? this.position.x;
     const _y = y ?? this.position.y;
 
-    const collidableEntities = renderService.getRenderables().filter((renderable) => (
+    const collidableEntities = gameService.getCurrentScene()?.getRenderables().filter((renderable) => (
       renderable !== this &&
       renderable instanceof BaseEntity &&
       renderable.getIsCollidable()
@@ -200,6 +206,8 @@ class BaseEntity {
     this.previousPosition.y = this.position.y;
   }
 
+  protected onCollision(_entity: BaseEntity) {}
+
   private _updatePosition(deltaTime: number) {
     if (!this.isCollidable) {
       this.position.x += this.velocity.x * deltaTime;
@@ -214,6 +222,10 @@ class BaseEntity {
 
     const collidingEntitiesX = this.getCollidingRenderables(newPosition.x, this.position.y);
     const collidingEntitiesY = this.getCollidingRenderables(this.position.x, newPosition.y);
+
+    new Set([...collidingEntitiesX, ...collidingEntitiesY]).forEach((entity) => {
+      this.onCollision(entity);
+    });
 
     if (collidingEntitiesX.length === 0) {
       this.position.x = newPosition.x;

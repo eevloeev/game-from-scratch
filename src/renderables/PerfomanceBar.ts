@@ -19,6 +19,8 @@ class PerfomanceBar implements Renderable {
   private drawFps(ctx: CanvasRenderingContext2D) {
     ctx.fillStyle = "yellow";
     ctx.font = "bold 20px Arial";
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = "black";
     ctx.fillText(`FPS: ${this.fps}`, 10, 30);
   }
 

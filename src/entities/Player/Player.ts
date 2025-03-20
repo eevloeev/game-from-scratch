@@ -1,8 +1,8 @@
 import BaseEntity from "@/entities/BaseEntity";
 import Bullet from "@/entities/Bullet";
 import { frameHeight, frameScale, frameWidth, sequenceMap } from "@/entities/Player/animation";
+import gameService from "@/services/gameService";
 import inputService from "@/services/inputService";
-import renderService from "@/services/renderService";
 
 enum Direction {
   Up = "up",
@@ -29,8 +29,6 @@ type Weapon = {
 };
 
 class Player extends BaseEntity {
-  public static players: Player[] = [];
-
   private walkSpeed = 300;
   private diagonalSpeed = this.walkSpeed * Math.sqrt(2) / 2;
   private state: State = State.Idle;
@@ -38,6 +36,20 @@ class Player extends BaseEntity {
   private weapon: Weapon = { x: 0, y: 0, width: 128, height: 4, angle: 0 };
   private attackCooldown = 500;
   private lastAttackTime = 0;
+  private score = 0;
+  protected health = 3;
+
+  public getScore() {
+    return this.score;
+  }
+
+  public addScore(amount: number) {
+    this.score += amount;
+  }
+
+  public resetScore() {
+    this.score = 0;
+  }
 
   private updatePosition() {
     const input = inputService.getInput();
@@ -150,8 +162,14 @@ class Player extends BaseEntity {
       const { x, y } = this.getPosition();
       const { width, height } = this.getSize();
       const { angle } = this.weapon;
-      renderService.addRenderables(new Bullet(x + width / 2, y + height / 2, angle, this));
+      gameService.getCurrentScene()?.addRenderables(new Bullet(x + width / 2, y + height / 2, angle, this));
     }
+  }
+
+  protected onDestroy() {
+    gameService.getCurrentScene()?.pause();
+    alert(`Game over! Your score is ${this.score}. Press "OK" to restart.`);
+    gameService.start();
   }
 
   public onRender(ctx: CanvasRenderingContext2D) {
@@ -166,7 +184,6 @@ class Player extends BaseEntity {
 
   constructor(x: number, y: number) {
     super(x, y, 40, 64);
-    Player.players.push(this);
   }
 
   protected onCreate() {
