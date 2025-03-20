@@ -1,6 +1,5 @@
 import "@/style.css";
 
-import HomeScene from "@/scenes/HomeScene";
 import assetService from "@/services/assetService";
 import gameService from "@/services/gameService";
 import playerUnarmedIdleSprite from "@/assets/player/Unarmed_Idle/Unarmed_Idle_full.png";
@@ -10,6 +9,7 @@ const { width, height } = gameService.getConfig();
 const canvas = document.createElement("canvas");
 canvas.width = width;
 canvas.height = height;
+document.body.appendChild(canvas);
 
 const ctx = canvas.getContext("2d");
 
@@ -30,7 +30,6 @@ assetService.loadAssets({
   playerUnarmedIdle: playerUnarmedIdleSprite,
   playerUnarmedWalk: playerUnarmedWalkSprite,
 }).then(() => {
-  document.body.appendChild(canvas);
   gameService.start();
   render();
 });
