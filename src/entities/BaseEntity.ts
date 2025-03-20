@@ -48,13 +48,24 @@ class BaseEntity {
           ));
 
           this.position.x = leftMostCollidingEntity.position.x - this.size.width;
-          
+
+          const newCollidingEntities = this.getCollidingRenderables(x, this.position.y);
+
+          if (newCollidingEntities.length !== 0) {
+            this.position.x = this.previousPosition.x;
+          }
         } else {
           const rightMostCollidingEntity = collidingEntities.reduce((prev, current) => (
             prev.position.x > current.position.x ? prev : current
           ));
 
           this.position.x = rightMostCollidingEntity.position.x + rightMostCollidingEntity.size.width;
+
+          const newCollidingEntities = this.getCollidingRenderables(x, this.position.y);
+
+          if (newCollidingEntities.length !== 0) {
+            this.position.x = this.previousPosition.x;
+          }
         }
       }
     } else {
@@ -77,13 +88,24 @@ class BaseEntity {
           ));
 
           this.position.y = upMostCollidingEntity.position.y - this.size.height;
-          
+
+          const newCollidingEntities = this.getCollidingRenderables(this.position.x, y);
+
+          if (newCollidingEntities.length !== 0) {
+            this.position.y = this.previousPosition.y;
+          }
         } else {
           const downMostCollidingEntity = collidingEntities.reduce((prev, current) => (
             prev.position.y > current.position.y ? prev : current
           ));
 
           this.position.y = downMostCollidingEntity.position.y + downMostCollidingEntity.size.height;
+
+          const newCollidingEntities = this.getCollidingRenderables(this.position.x, y);
+
+          if (newCollidingEntities.length !== 0) {
+            this.position.y = this.previousPosition.y;
+          }
         }
       }
     } else {
