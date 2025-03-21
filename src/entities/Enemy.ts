@@ -34,7 +34,7 @@ class Enemy extends BaseEntity {
   }
 
   protected onCollision(entity: BaseEntity) {
-    if (entity instanceof Player) {
+    if (entity instanceof Player && entity.getDamagable()) {
       entity.decreaseHealth(this.damage);
       this.destroy();
     }
