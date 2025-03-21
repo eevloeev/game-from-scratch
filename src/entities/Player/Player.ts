@@ -166,8 +166,8 @@ class Player extends BaseEntity {
     }
   }
 
-  protected onDestroy() {
-    gameService.getCurrentScene()?.pause();
+  protected async onDestroy() {
+    await gameService.getCurrentScene()?.pause();
     alert(`Game over! Your score is ${this.score}. Press "OK" to restart.`);
     gameService.start();
   }

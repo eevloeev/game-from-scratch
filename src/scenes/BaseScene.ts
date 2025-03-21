@@ -19,8 +19,10 @@ class BaseScene implements Renderable {
     return this.players;
   }
 
-  public pause() {
+  public async pause() {
     this.isPaused = true;
+    // Wait for the current frame to finish
+    await new Promise((resolve) => setTimeout(resolve));
   }
 
   public resume() {
